@@ -17,6 +17,8 @@ paths:
           required: true
           schema:
             type: string
+            minLength: 1
+            maxLength: 200
       responses:
         '200':
           description: Returns Key Value for the given key
@@ -24,6 +26,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/KeyValueResponse'
+        '400':
+          description: Bad Request when key or value is greater than expected
         '404':
           description: Not Found Error when key no present
     delete:
@@ -39,9 +43,13 @@ paths:
           required: true
           schema:
             type: string
+            minLength: 1
+            maxLength: 200
       responses:
         '204':
           description: The key was correctly removed
+        '400':
+          description: Bad Request when key is greater than expected
         '404':
           description: Not Found Error when key no present      
   /keys:
@@ -59,6 +67,8 @@ paths:
       responses:
         '204':
           description: KeyValue pair created successfully
+        '400':
+          description: Bad Request when key or value is greater than expected
         '409':
           description: Conflict. Key is already present
 components:
@@ -66,17 +76,14 @@ components:
     # Separated contracts Request/Response to avoid breaking changes in the future
     KeyValueResponse:
       type: object
-      required:
-        - key
-      properties:
-        key:
-          type: string
-          example: value
+      additionalProperties:
+        type: string
     AddKeyRequest:
       type: object
-      required:
-        - key
-      properties:
-        key:
-          type: string
-          example: value
+      additionalProperties:
+        type: string
+        minLength: 1
+        maxLength: 200
+        minProperties: 1
+        maxProperties: 1
+        example: value
