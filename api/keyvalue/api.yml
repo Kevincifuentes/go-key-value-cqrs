@@ -1,0 +1,82 @@
+openapi: "3.0.0"
+info:
+  version: 0.1.0
+  title: Minimal Key Value Storage API server
+paths:
+  /keys/{key}:
+    get:
+      description: Returns KeyValue pair based on Key
+      summary: Finds KeyValue by Key or Not Found
+      operationId: getKeyValueByKey
+      tags:
+        - keyvalue
+      parameters:
+        - name: key
+          in: path
+          description: key of the value to find
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns Key Value for the given key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KeyValueResponse'
+        '404':
+          description: Not Found Error when key no present
+    delete:
+      description: Removes a KeyValue pair based on Key
+      summary: Removes KeyValue by Key or Not Found if the key is not present
+      operationId: deleteKeyValueByKey
+      tags:
+        - keyvalue
+      parameters:
+        - name: key
+          in: path
+          description: key of the value to find
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: The key was correctly removed
+        '404':
+          description: Not Found Error when key no present      
+  /keys:
+    post:
+      description: Adds a new entry of KeyValue pair
+      summary: Adds a new entry of KeyValue pair or conflict if already exists
+      operationId: postKey
+      tags:
+        - keyvalue
+      requestBody: 
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/AddKeyRequest'
+      responses:
+        '204':
+          description: KeyValue pair created successfully
+        '409':
+          description: Conflict. Key is already present
+components:
+  schemas:
+    # Separated contracts Request/Response to avoid breaking changes in the future
+    KeyValueResponse:
+      type: object
+      required:
+        - key
+      properties:
+        key:
+          type: string
+          example: value
+    AddKeyRequest:
+      type: object
+      required:
+        - key
+      properties:
+        key:
+          type: string
+          example: value

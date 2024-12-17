@@ -1,0 +1,11 @@
+# IDEA
+.idea
+
+# Assets
+assets
+
+# goenv
+.go-version
+
+# other
+*.iml
