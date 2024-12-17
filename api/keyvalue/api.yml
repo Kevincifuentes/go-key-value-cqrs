@@ -17,6 +17,8 @@ paths:
           required: true
           schema:
             type: string
+            minLength: 1
+            maxLength: 200
       responses:
         '200':
           description: Returns Key Value for the given key
@@ -79,4 +81,6 @@ components:
       properties:
         key:
           type: string
+          minLength: 1
+          maxLength: 200
           example: value
