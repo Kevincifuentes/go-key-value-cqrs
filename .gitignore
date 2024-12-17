@@ -6,3 +6,6 @@ assets
 
 # goenv
 .go-version
+
+# other
+*.iml
