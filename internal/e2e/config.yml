@@ -1,0 +1,5 @@
+package: client
+output: client/keyvalueclient.gen.go
+generate:
+  models: true
+  client: true
