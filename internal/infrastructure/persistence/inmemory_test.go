@@ -23,6 +23,8 @@ func TestMain(testing *testing.M) {
 func TestKeyValueFoundWithRepository(t *testing.T) {
 	// when
 	keyValueView, err := repository.Get(defaultTestKey)
+
+	// then
 	if err != nil || keyValueView.Value != defaultTestValue {
 		t.Logf(
 			"expected no error and expected value %s: actual value=%v, actual error=%v",
@@ -37,6 +39,8 @@ func TestKeyValueNotFoundWithRepository(t *testing.T) {
 
 	// when
 	keyValueView, err := repository.Get(unknownKey)
+
+	// then
 	if err == nil || keyValueView != (domain.KeyValueView{}) {
 		t.Logf(
 			"expected no error and expected value %s: actual value=%v, actual error=%v",
