@@ -60,3 +60,10 @@ func newKeyValue(key string, value string) (*KeyValue, error) {
 		value: valueValue,
 	}, nil
 }
+
+// View
+
+type KeyValueView struct {
+	key   string
+	value string
+}
