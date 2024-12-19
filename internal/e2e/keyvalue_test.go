@@ -16,7 +16,7 @@ import (
 )
 
 var MaxKeyLength = 200
-var FAKER = faker.New()
+var Faker = faker.New()
 
 var testServer *httptest.Server
 var keyValueClient *client.ClientWithResponses
@@ -37,7 +37,7 @@ func TestMain(testing *testing.M) {
 
 func TestGetKeyValueShouldNotBeFound(t *testing.T) {
 	// given
-	expectedKey := FAKER.Person().Name()
+	expectedKey := Faker.Person().Name()
 
 	// when
 	response, err := keyValueClient.GetKeyValueByKeyWithResponse(context.TODO(), expectedKey)
@@ -50,7 +50,7 @@ func TestGetKeyValueShouldNotBeFound(t *testing.T) {
 
 func TestGetKeyValueBadRequestOnLongKey(t *testing.T) {
 	// given
-	expectedKey := FAKER.Lorem().Sentence(MaxKeyLength + 1)
+	expectedKey := Faker.Lorem().Sentence(MaxKeyLength + 1)
 
 	// when
 	response, err := keyValueClient.GetKeyValueByKeyWithResponse(context.TODO(), expectedKey)
@@ -63,8 +63,8 @@ func TestGetKeyValueBadRequestOnLongKey(t *testing.T) {
 func TestGetKeyValueFoundsValue(t *testing.T) {
 	// given
 
-	expectedKey := FAKER.Person().Name()
-	expectedValue := FAKER.Person().Name()
+	expectedKey := Faker.Person().Name()
+	expectedValue := Faker.Person().Name()
 
 	// when
 	response, err := keyValueClient.GetKeyValueByKeyWithResponse(context.TODO(), expectedKey)
