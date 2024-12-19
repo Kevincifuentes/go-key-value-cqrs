@@ -64,6 +64,6 @@ func newKeyValue(key string, value string) (*KeyValue, error) {
 // View
 
 type KeyValueView struct {
-	key   string
-	value string
+	Key   string
+	Value string
 }

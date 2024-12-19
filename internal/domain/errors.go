@@ -33,3 +33,11 @@ type KeyNotFoundError struct {
 func (e KeyNotFoundError) Error() string {
 	return e.message
 }
+
+func NewKeyNotFoundError(key string) error {
+	return &KeyNotFoundError{
+		KeyValueError{
+			fmt.Sprintf("No value found with key '%v'", key),
+		},
+	}
+}
