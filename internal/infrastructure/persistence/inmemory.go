@@ -5,6 +5,7 @@ import (
 	"sync"
 )
 
+// KeyValueMap Using Mutex because I'm considering frequent writes
 type KeyValueMap struct {
 	keyToValueMap map[string]string
 	barrier       sync.RWMutex

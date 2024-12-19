@@ -7,4 +7,5 @@ use (
 	internal/infrastructure
 	internal/e2e
 	internal/domain
+	internal/application
 )
