@@ -1,5 +1,7 @@
 go 1.23.4
 
+// TODO: Open issue to solve multimodule test execution: https://github.com/golang/go/issues/50745
+
 use (
 	.
 	internal/infrastructure
