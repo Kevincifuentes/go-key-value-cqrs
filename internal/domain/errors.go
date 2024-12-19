@@ -25,3 +25,11 @@ func NewInvalidLengthError(value string, valueName string, minValue int, maxValu
 		},
 	}
 }
+
+type KeyNotFoundError struct {
+	KeyValueError
+}
+
+func (e KeyNotFoundError) Error() string {
+	return e.message
+}
