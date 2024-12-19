@@ -25,3 +25,19 @@ func NewInvalidLengthError(value string, valueName string, minValue int, maxValu
 		},
 	}
 }
+
+type KeyNotFoundError struct {
+	KeyValueError
+}
+
+func (e KeyNotFoundError) Error() string {
+	return e.message
+}
+
+func NewKeyNotFoundError(key string) error {
+	return &KeyNotFoundError{
+		KeyValueError{
+			fmt.Sprintf("No value found with key '%v'", key),
+		},
+	}
+}
