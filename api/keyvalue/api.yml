@@ -28,6 +28,10 @@ paths:
                 $ref: '#/components/schemas/KeyValueResponse'
         '400':
           description: Bad Request when key or value is greater than expected
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Not Found Error when key no present
     delete:
@@ -49,7 +53,11 @@ paths:
         '204':
           description: The key was correctly removed
         '400':
-          description: Bad Request when key is greater than expected
+          description: Bad Request when key or value is greater than expected
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Not Found Error when key no present      
   /keys:
@@ -78,6 +86,12 @@ components:
       type: object
       additionalProperties:
         type: string
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          description: The error message returned from the server
+          type: string
     AddKeyRequest:
       type: object
       additionalProperties:
