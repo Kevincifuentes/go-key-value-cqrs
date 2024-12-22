@@ -15,7 +15,7 @@ It will support a Key/Value storage service with REST API capabilities to:
 If you have your own environment ready with Go (1.23.4 version), you can directly run the following bash script to run 
 all tests and generate coverage report on ``assets`` directory:
 ``` bash
-. bash ./runAllTests.sh
+bash ./runAllTests.sh
 ```
 
 This will display a console report like the following extract:
