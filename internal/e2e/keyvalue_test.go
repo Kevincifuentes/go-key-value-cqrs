@@ -15,12 +15,13 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var MaxKeyLength = 200
-var Faker = faker.New()
+var maxKeyLength = 200
+var fakerInstance = faker.New()
 
 var testServer *httptest.Server
 var keyValueClient *client.ClientWithResponses
 var clientError error
+var keyValueObjectMother KeyValueObjectMother
 
 func TestMain(testing *testing.M) {
 	testServer = httptest.NewServer(api.InitHandler("../../api/keyvalue/api.yml"))
@@ -28,6 +29,7 @@ func TestMain(testing *testing.M) {
 	hc := http.Client{}
 
 	keyValueClient, clientError = client.NewClientWithResponses(testServer.URL, client.WithHTTPClient(&hc))
+	keyValueObjectMother = KeyValueObjectMother{fakerInstance: &fakerInstance, client: keyValueClient}
 	if clientError != nil {
 		log.Fatal(clientError)
 	}
@@ -37,7 +39,7 @@ func TestMain(testing *testing.M) {
 
 func TestGetKeyValueShouldNotBeFound(t *testing.T) {
 	// given
-	expectedKey := Faker.Person().Name()
+	expectedKey := fakerInstance.Person().Name()
 
 	// when
 	response, err := keyValueClient.GetKeyValueByKeyWithResponse(context.TODO(), expectedKey)
@@ -50,7 +52,7 @@ func TestGetKeyValueShouldNotBeFound(t *testing.T) {
 
 func TestGetKeyValueBadRequestOnLongKey(t *testing.T) {
 	// given
-	expectedKey := Faker.Lorem().Sentence(MaxKeyLength + 1)
+	expectedKey := fakerInstance.Lorem().Sentence(maxKeyLength + 1)
 
 	// when
 	response, err := keyValueClient.GetKeyValueByKeyWithResponse(context.TODO(), expectedKey)
@@ -58,11 +60,11 @@ func TestGetKeyValueBadRequestOnLongKey(t *testing.T) {
 	// then
 	require.Nil(t, err)
 	require.Equal(t, http.StatusBadRequest, response.StatusCode())
+	require.Contains(t, *response.JSON400.Message, "maximum string length is 200")
 }
 
 func TestGetKeyValueFoundsValue(t *testing.T) {
 	// given
-
 	expectedKey := "TestingKey"
 	expectedValue := "TestingValue"
 
@@ -74,4 +76,48 @@ func TestGetKeyValueFoundsValue(t *testing.T) {
 	require.Equal(t, http.StatusOK, response.StatusCode())
 	expectedResponse := &client.KeyValueResponse{expectedKey: expectedValue}
 	require.Equal(t, expectedResponse, response.JSON200)
+}
+
+func TestPostKeyValueSuccessful(t *testing.T) {
+	// given
+	expectedKey := fakerInstance.UUID().V4()
+	expectedValue := fakerInstance.Person().Name()
+	request := client.AddKeyRequest{expectedKey: expectedValue}
+
+	// when
+	response, err := keyValueClient.PostKeyWithResponse(context.TODO(), request)
+
+	// then
+	require.Nil(t, err)
+	require.Equal(t, http.StatusNoContent, response.StatusCode())
+	require.Equal(t, http.NoBody, response.HTTPResponse.Body)
+}
+
+func TestPostKeyValueShouldReturnConflict(t *testing.T) {
+	// given
+	alreadyPresentExpectedKey, expectedValue := keyValueObjectMother.createRandom()
+	request := client.AddKeyRequest{alreadyPresentExpectedKey: expectedValue}
+
+	// when
+	response, err := keyValueClient.PostKeyWithResponse(context.TODO(), request)
+
+	// then
+	require.Nil(t, err)
+	require.Equal(t, http.StatusConflict, response.StatusCode())
+	require.Contains(t, "key already exists", string(response.Body))
+}
+
+func TestPostKeyValueShouldReturnsBadRequestOnLongValues(t *testing.T) {
+	// given
+	expectedKey := fakerInstance.RandomStringWithLength(maxKeyLength + 1)
+	expectedValue := fakerInstance.Person().Name()
+	request := client.AddKeyRequest{expectedKey: expectedValue}
+
+	// when
+	response, err := keyValueClient.PostKeyWithResponse(context.TODO(), request)
+
+	// then
+	require.Nil(t, err)
+	require.Equal(t, http.StatusBadRequest, response.StatusCode())
+	require.Contains(t, "parameter \"key\" in path has an error: maximum string length is 200", string(response.Body))
 }
