@@ -42,7 +42,8 @@ func InitHandler(openApiRelativePath string) http.Handler {
 	handler := HandlerFromMux(keyValueServer, serveMux)
 	openApiFilepath, _ := filepath.Abs(openApiRelativePath)
 	swagger, _ := openapi3.NewLoader().LoadFromFile(openApiFilepath)
-	validatorMiddleware := middleware.OapiRequestValidator(swagger)
+	validatorMiddleware := middleware.OapiRequestValidatorWithOptions(swagger,
+		&middleware.Options{ErrorHandler: handleErrorMessage})
 	return validatorMiddleware(handler)
 }
 
@@ -68,10 +69,14 @@ func handleResponse(writer http.ResponseWriter, response any, successfulStatusCo
 		return
 	}
 
+	handleError(writer, err)
+}
+
+func handleError(writer http.ResponseWriter, err error) {
 	var keyValueError *domain.KeyValueDomainError
 	isKeyValueDomainError := errors.As(err, &keyValueError)
 	if isKeyValueDomainError {
-		http.Error(writer, err.Error(), http.StatusBadRequest)
+		handleErrorMessage(writer, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -82,14 +87,18 @@ func handleResponse(writer http.ResponseWriter, response any, successfulStatusCo
 		return
 	}
 
-	http.Error(writer, err.Error(), http.StatusInternalServerError)
+	handleErrorMessage(writer, err.Error(), http.StatusInternalServerError)
 }
 
-func writeJSON(w http.ResponseWriter, status int, data interface{}) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(status)
+func handleErrorMessage(writer http.ResponseWriter, message string, statusCode int) {
+	writeJSON(writer, statusCode, model.ErrorResponse{Message: message})
+}
 
-	if err := json.NewEncoder(w).Encode(data); err != nil {
-		http.Error(w, "Failed to encode JSON", http.StatusInternalServerError)
+func writeJSON(writer http.ResponseWriter, status int, data interface{}) {
+	writer.Header().Set("Content-Type", "application/json")
+	writer.WriteHeader(status)
+
+	if err := json.NewEncoder(writer).Encode(data); err != nil {
+		http.Error(writer, "Failed to encode JSON", http.StatusInternalServerError)
 	}
 }
