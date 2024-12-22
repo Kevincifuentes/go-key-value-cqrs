@@ -4,12 +4,16 @@ import (
 	"fmt"
 )
 
-type KeyValueError struct {
+type KeyValueDomainError struct {
 	message string
 }
 
+func (e KeyValueDomainError) Error() string {
+	return e.message
+}
+
 type InvalidLengthError struct {
-	KeyValueError
+	KeyValueDomainError
 }
 
 func (e InvalidLengthError) Error() string {
@@ -18,7 +22,7 @@ func (e InvalidLengthError) Error() string {
 
 func NewInvalidLengthError(value string, valueName string, minValue int, maxValue int) error {
 	return &InvalidLengthError{
-		KeyValueError{
+		KeyValueDomainError{
 			fmt.Sprintf(
 				"expected '%v' to have a value between %v and %v; got %v (len=%v)",
 				valueName, minValue, maxValue, value, len(value)),
@@ -27,7 +31,7 @@ func NewInvalidLengthError(value string, valueName string, minValue int, maxValu
 }
 
 type KeyNotFoundError struct {
-	KeyValueError
+	message string
 }
 
 func (e KeyNotFoundError) Error() string {
@@ -36,8 +40,6 @@ func (e KeyNotFoundError) Error() string {
 
 func NewKeyNotFoundError(key string) error {
 	return &KeyNotFoundError{
-		KeyValueError{
-			fmt.Sprintf("No value found with key '%v'", key),
-		},
+		fmt.Sprintf("No value found with key '%v'", key),
 	}
 }
