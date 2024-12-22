@@ -19,6 +19,12 @@ import (
 // AddKeyRequest defines model for AddKeyRequest.
 type AddKeyRequest map[string]string
 
+// ErrorResponse defines model for ErrorResponse.
+type ErrorResponse struct {
+	// Message The error message returned from the server
+	Message *string `json:"message,omitempty"`
+}
+
 // KeyValueResponse defines model for KeyValueResponse.
 type KeyValueResponse map[string]string
 
@@ -345,6 +351,7 @@ func (r PostKeyResponse) StatusCode() int {
 type DeleteKeyValueByKeyResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
+	JSON400      *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -367,6 +374,7 @@ type GetKeyValueByKeyResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *KeyValueResponse
+	JSON400      *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -449,6 +457,16 @@ func ParseDeleteKeyValueByKeyResponse(rsp *http.Response) (*DeleteKeyValueByKeyR
 		HTTPResponse: rsp,
 	}
 
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	}
+
 	return response, nil
 }
 
@@ -472,6 +490,13 @@ func ParseGetKeyValueByKeyResponse(rsp *http.Response) (*GetKeyValueByKeyRespons
 			return nil, err
 		}
 		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
 
 	}
 

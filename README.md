@@ -15,7 +15,7 @@ It will support a Key/Value storage service with REST API capabilities to:
 If you have your own environment ready with Go (1.23.4 version), you can directly run the following bash script to run 
 all tests and generate coverage report on ``assets`` directory:
 ``` bash
-. bash ./runAllTests.sh
+bash ./runAllTests.sh
 ```
 
 This will display a console report like the following extract:
@@ -37,5 +37,5 @@ ok      go-key-value-cqrs/application/queries/cqrs/querybus     0.183s  coverage
 ok      go-key-value-cqrs/application/queries/keyvalue/getvalue 0.342s  coverage: 27.5% of statements in go-key-value-cqrs/...
 ```
 
-When finished, you can access to ```root/assets/coverage.html``` to see a user-friendly coverage report for 
+When finished, you can access to ```go-key-value-cqrs/assets/coverage.html``` to see a user-friendly coverage report for 
 all the modules.

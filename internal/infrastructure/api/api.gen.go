@@ -15,6 +15,12 @@ import (
 // AddKeyRequest defines model for AddKeyRequest.
 type AddKeyRequest map[string]string
 
+// ErrorResponse defines model for ErrorResponse.
+type ErrorResponse struct {
+	// Message The error message returned from the server
+	Message *string `json:"message,omitempty"`
+}
+
 // KeyValueResponse defines model for KeyValueResponse.
 type KeyValueResponse map[string]string
 
