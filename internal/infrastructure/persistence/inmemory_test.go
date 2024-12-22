@@ -15,7 +15,7 @@ var repository domain.KeyValueReader
 
 func TestMain(testing *testing.M) {
 	initialMap := map[string]string{defaultTestKey: defaultTestValue}
-	repository = &InMemoryKeyValueRepository{keyValueMap: KeyValueMap{keyToValueMap: initialMap}}
+	repository = &InMemoryKeyValueRepository{KeyValueMap: KeyValueMap{keyToValueMap: initialMap}}
 
 	testing.Run()
 }

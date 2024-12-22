@@ -5,20 +5,30 @@ import (
 	"sync"
 )
 
+// KeyValueMap Using Mutex because I'm considering frequent writes
 type KeyValueMap struct {
 	keyToValueMap map[string]string
 	barrier       sync.RWMutex
 }
 
 type InMemoryKeyValueRepository struct {
-	keyValueMap KeyValueMap
+	KeyValueMap KeyValueMap
+}
+
+func NewInMemoryKeyValueRepository() *InMemoryKeyValueRepository {
+	return &InMemoryKeyValueRepository{
+		KeyValueMap: KeyValueMap{
+			//TODO: Remove testing key when e2e POST action is implemented
+			keyToValueMap: map[string]string{"TestingKey": "TestingValue"},
+		},
+	}
 }
 
 func (repository *InMemoryKeyValueRepository) Get(key string) (domain.KeyValueView, error) {
-	barrier := &repository.keyValueMap.barrier
+	barrier := &repository.KeyValueMap.barrier
 	barrier.RLock()
 	defer barrier.RUnlock()
-	value, ok := repository.keyValueMap.keyToValueMap[key]
+	value, ok := repository.KeyValueMap.keyToValueMap[key]
 	if !ok {
 		return domain.KeyValueView{}, domain.NewKeyNotFoundError(key)
 	}
