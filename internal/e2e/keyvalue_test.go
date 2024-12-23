@@ -104,7 +104,7 @@ func TestPostKeyValueShouldReturnConflict(t *testing.T) {
 	// then
 	require.Nil(t, err)
 	require.Equal(t, http.StatusConflict, response.StatusCode())
-	require.Contains(t, "key already exists", string(response.Body))
+	require.Contains(t, string(response.Body), "already exists")
 }
 
 func TestPostKeyValueShouldReturnsBadRequestOnLongValues(t *testing.T) {
