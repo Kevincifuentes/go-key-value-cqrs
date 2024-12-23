@@ -4,7 +4,7 @@ import (
 	"errors"
 	"github.com/jaswdr/faker/v2"
 	"github.com/labstack/gommon/log"
-	"go-key-value-cqrs/application/queries/cqrs/querybus"
+	"go-key-value-cqrs/application/cqrs/querybus"
 	"go-key-value-cqrs/domain"
 	"testing"
 )
