@@ -88,7 +88,7 @@ func validateAddKeyValueRequest(request *http.Request) (AddKeyRequest, string, e
 	}
 
 	if len(addKeyRequest) != 1 {
-		return nil, "", model.NewInvalidRequestError(addKeyRequest, "Only one key is allowed")
+		return nil, "", model.NewApiValidationError(addKeyRequest, "Only one key is allowed")
 	}
 	return addKeyRequest, maps.Keys(addKeyRequest)[0], nil
 }
@@ -109,8 +109,10 @@ func handleResponse(writer http.ResponseWriter, response any, successfulStatusCo
 
 func handleError(writer http.ResponseWriter, err error) {
 	var keyValueError *domain.KeyValueDomainError
+	var apiValidationError model.ApiValidationError
 	isKeyValueDomainError := errors.As(err, &keyValueError)
-	if isKeyValueDomainError {
+	isApiValidationError := errors.As(err, &apiValidationError)
+	if isKeyValueDomainError || isApiValidationError {
 		handleErrorMessage(writer, err.Error(), http.StatusBadRequest)
 		return
 	}
