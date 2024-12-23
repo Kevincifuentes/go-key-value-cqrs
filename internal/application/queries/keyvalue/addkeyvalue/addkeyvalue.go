@@ -9,6 +9,6 @@ type Command struct {
 	Value string
 }
 
-func (query Command) Config() commandbus.CommandConfig {
+func (command Command) Config() commandbus.CommandConfig {
 	return commandbus.CommandConfig{Name: "AddKeyValueCommand"}
 }
