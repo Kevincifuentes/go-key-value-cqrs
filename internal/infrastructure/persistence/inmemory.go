@@ -28,9 +28,23 @@ func (repository *InMemoryKeyValueRepository) Get(key string) (domain.KeyValueVi
 	barrier := &repository.KeyValueMap.barrier
 	barrier.RLock()
 	defer barrier.RUnlock()
+
 	value, ok := repository.KeyValueMap.keyToValueMap[key]
 	if !ok {
 		return domain.KeyValueView{}, domain.NewKeyNotFoundError(key)
 	}
 	return domain.KeyValueView{Key: key, Value: value}, nil
+}
+
+func (repository *InMemoryKeyValueRepository) Add(keyValue domain.KeyValue) error {
+	barrier := &repository.KeyValueMap.barrier
+	barrier.Lock()
+	defer barrier.Unlock()
+
+	keyToAdd := keyValue.Key.Key
+	if _, exists := repository.KeyValueMap.keyToValueMap[keyToAdd]; exists {
+		return domain.NewKeyExistsError(keyToAdd)
+	}
+	repository.KeyValueMap.keyToValueMap[keyToAdd] = keyValue.Value.Value
+	return nil
 }
