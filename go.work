@@ -9,4 +9,5 @@ use (
 	internal/e2e
 	internal/domain
 	internal/application
+	internal/objectmothers
 )
