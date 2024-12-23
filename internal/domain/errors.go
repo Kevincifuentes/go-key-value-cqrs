@@ -12,21 +12,11 @@ func (e KeyValueDomainError) Error() string {
 	return e.message
 }
 
-type InvalidLengthError struct {
-	KeyValueDomainError
-}
-
-func (e InvalidLengthError) Error() string {
-	return e.message
-}
-
-func NewInvalidLengthError(value string, valueName string, minValue int, maxValue int) error {
-	return &InvalidLengthError{
-		KeyValueDomainError{
-			fmt.Sprintf(
-				"expected '%v' to have a value between %v and %v; got %v (len=%v)",
-				valueName, minValue, maxValue, value, len(value)),
-		},
+func NewInvalidLengthError(value string, valueName string, minValue int, maxValue int) *KeyValueDomainError {
+	return &KeyValueDomainError{
+		fmt.Sprintf(
+			"expected '%v' to have a value between %v and %v; got %v (len=%v)",
+			valueName, minValue, maxValue, value, len(value)),
 	}
 }
 

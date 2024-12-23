@@ -45,7 +45,7 @@ type KeyValue struct {
 	Value *KeyValueValue
 }
 
-func newKeyValue(key string, value string) (*KeyValue, error) {
+func NewKeyValue(key string, value string) (*KeyValue, error) {
 	keyValue, err := newKeyValueKey(key)
 	if err != nil {
 		return nil, err

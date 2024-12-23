@@ -15,8 +15,11 @@ type testInterfaceMock struct {
 	expectedError error
 }
 
-func (mock *testInterfaceMock) Get(_ string) (domain.KeyValueView, error) {
+func (mock *testInterfaceMock) Get(key string) (domain.KeyValueView, error) {
 	mock.numberOfCalls++
+	if key != mock.expectedValue.Key {
+		log.Errorf("Expected key %s but got %s", mock.expectedValue.Key, key)
+	}
 	return mock.expectedValue, mock.expectedError
 }
 

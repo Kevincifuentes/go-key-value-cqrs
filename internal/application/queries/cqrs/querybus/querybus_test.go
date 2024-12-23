@@ -107,7 +107,7 @@ func TestQueryNotFound(t *testing.T) {
 
 func TestHandlerTypeInvalid(t *testing.T) {
 	// given
-	err := Load(TestAnotherQueryHandler{})
+	_ = Load(TestAnotherQueryHandler{})
 	expectedId := "TestQueryNotFound"
 	query := anotherTestQuery{expectedId}
 

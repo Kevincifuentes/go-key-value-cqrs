@@ -104,7 +104,7 @@ func TestPostKeyValueShouldReturnConflict(t *testing.T) {
 	// then
 	require.Nil(t, err)
 	require.Equal(t, http.StatusConflict, response.StatusCode())
-	require.Contains(t, "key already exists", string(response.Body))
+	require.Contains(t, string(response.Body), "already exists")
 }
 
 func TestPostKeyValueShouldReturnsBadRequestOnLongValues(t *testing.T) {
@@ -119,5 +119,21 @@ func TestPostKeyValueShouldReturnsBadRequestOnLongValues(t *testing.T) {
 	// then
 	require.Nil(t, err)
 	require.Equal(t, http.StatusBadRequest, response.StatusCode())
-	require.Contains(t, "parameter \"key\" in path has an error: maximum string length is 200", string(response.Body))
+	require.Contains(t, string(response.Body), "expected 'key' to have a value between 1 and 200")
+}
+
+func TestPostKeyValueShouldReturnsBadRequestOnMoreThanOneKey(t *testing.T) {
+	// given
+	expectedKey := fakerInstance.UUID().V4()
+	anotherKey := fakerInstance.UUID().V4()
+	expectedValue := fakerInstance.Person().Name()
+	request := client.AddKeyRequest{expectedKey: expectedValue, anotherKey: expectedValue}
+
+	// when
+	response, err := keyValueClient.PostKeyWithResponse(context.TODO(), request)
+
+	// then
+	require.Nil(t, err)
+	require.Equal(t, http.StatusBadRequest, response.StatusCode())
+	require.Contains(t, string(response.Body), "Only one key is allowed")
 }

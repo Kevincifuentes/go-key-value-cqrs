@@ -8,31 +8,19 @@ import (
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/labstack/gommon/log"
 	middleware "github.com/oapi-codegen/nethttp-middleware"
+	"go-key-value-cqrs/application/queries/cqrs/commandbus"
 	"go-key-value-cqrs/application/queries/cqrs/querybus"
+	"go-key-value-cqrs/application/queries/keyvalue/addkeyvalue"
 	"go-key-value-cqrs/application/queries/keyvalue/getvalue"
 	"go-key-value-cqrs/domain"
 	"go-key-value-cqrs/infrastructure/api/model"
 	"go-key-value-cqrs/infrastructure/persistence"
+	"golang.org/x/exp/maps"
 	"net/http"
 	"path/filepath"
 )
 
 type Server struct {
-	queryBus querybus.Query
-}
-
-func initializeQueryBus() {
-	keyValueReader := persistence.NewInMemoryKeyValueRepository()
-
-	err := querybus.Load(getvalue.QueryHandler{KeyValueReader: keyValueReader})
-	if err != nil {
-		log.Errorf("Error loading query bus %s", err)
-	}
-}
-
-func KeyValueServer() Server {
-	initializeQueryBus()
-	return Server{}
 }
 
 func InitHandler(openApiRelativePath string) http.Handler {
@@ -47,6 +35,28 @@ func InitHandler(openApiRelativePath string) http.Handler {
 	return validatorMiddleware(handler)
 }
 
+func initializeQueryBus(keyValueReader *persistence.InMemoryKeyValueRepository) {
+	err := querybus.Load(getvalue.QueryHandler{KeyValueReader: keyValueReader})
+	if err != nil {
+		log.Errorf("Error loading query bus %s", err)
+	}
+}
+
+func initializeCommandBus(keyValueWriter *persistence.InMemoryKeyValueRepository) {
+	err := commandbus.Load(addkeyvalue.CommandHandler{KeyValueWriter: keyValueWriter})
+	if err != nil {
+		log.Errorf("Error loading query bus %s", err)
+	}
+}
+
+func KeyValueServer() Server {
+	inMemoryKeyValueRepository := persistence.NewInMemoryKeyValueRepository()
+
+	initializeQueryBus(inMemoryKeyValueRepository)
+	initializeCommandBus(inMemoryKeyValueRepository)
+	return Server{}
+}
+
 // GetKeyValueByKey (GET /keys/:key)
 func (Server) GetKeyValueByKey(responseWriter http.ResponseWriter, _ *http.Request, key string) {
 	keyValueView, err := querybus.Asks[domain.KeyValueView](getvalue.Query{Key: key})
@@ -54,13 +64,38 @@ func (Server) GetKeyValueByKey(responseWriter http.ResponseWriter, _ *http.Reque
 }
 
 // PostKey (POST /keys)
-func (Server) PostKey(responseWriter http.ResponseWriter, _ *http.Request) {
-	responseWriter.WriteHeader(http.StatusNotImplemented)
+func (Server) PostKey(responseWriter http.ResponseWriter, request *http.Request) {
+	addKeyValue, key, err := validateAddKeyValueRequest(request)
+	if err != nil {
+		handleError(responseWriter, err)
+		return
+	}
+
+	err = commandbus.Execute(addkeyvalue.Command{Key: key, Value: addKeyValue[key]})
+
+	if err != nil {
+		handleError(responseWriter, err)
+		return
+	}
+
+	responseWriter.WriteHeader(http.StatusNoContent)
 }
 
 // DeleteKeyValueByKey (DELETE /keys/{key})
 func (Server) DeleteKeyValueByKey(responseWriter http.ResponseWriter, _ *http.Request, _ string) {
 	responseWriter.WriteHeader(http.StatusNotImplemented)
+}
+
+func validateAddKeyValueRequest(request *http.Request) (AddKeyRequest, string, error) {
+	var addKeyRequest AddKeyRequest
+	if err := json.NewDecoder(request.Body).Decode(&addKeyRequest); err != nil {
+		return nil, "", err
+	}
+
+	if len(addKeyRequest) != 1 {
+		return nil, "", model.NewApiValidationError(addKeyRequest, "Only one key is allowed")
+	}
+	return addKeyRequest, maps.Keys(addKeyRequest)[0], nil
 }
 
 func handleResponse(writer http.ResponseWriter, response any, successfulStatusCode int, err error) {
@@ -74,8 +109,10 @@ func handleResponse(writer http.ResponseWriter, response any, successfulStatusCo
 
 func handleError(writer http.ResponseWriter, err error) {
 	var keyValueError *domain.KeyValueDomainError
+	var apiValidationError model.ApiValidationError
 	isKeyValueDomainError := errors.As(err, &keyValueError)
-	if isKeyValueDomainError {
+	isApiValidationError := errors.As(err, &apiValidationError)
+	if isKeyValueDomainError || isApiValidationError {
 		handleErrorMessage(writer, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -84,6 +121,13 @@ func handleError(writer http.ResponseWriter, err error) {
 	isKeyNotFoundError := errors.As(err, &keyNotFoundError)
 	if isKeyNotFoundError {
 		writer.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	var keyAlreadyExists *domain.KeyExistsError
+	isKeyAlreadyExists := errors.As(err, &keyAlreadyExists)
+	if isKeyAlreadyExists {
+		handleErrorMessage(writer, err.Error(), http.StatusConflict)
 		return
 	}
 
