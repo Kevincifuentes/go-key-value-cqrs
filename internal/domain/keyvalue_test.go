@@ -62,7 +62,7 @@ func TestKeyValueConstructorShouldConstructWithoutError(t *testing.T) {
 	keyValue, err := newKeyValue(validKey, validValue)
 
 	// then
-	if err != nil || keyValue.key.key != validKey || keyValue.value.value != validValue {
+	if err != nil || keyValue.Key.Key != validKey || keyValue.Value.Value != validValue {
 		t.Logf("expected an InvalidLengthError: , actual keyValue: %v, actual error: %v", keyValue, err)
 		t.Fail()
 	}

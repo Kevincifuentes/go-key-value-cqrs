@@ -14,35 +14,35 @@ func validateLength(value string, valueName string, minLength int, maxLength int
 	return nil
 }
 
-type keyValueKey struct {
-	key string
+type KeyValueKey struct {
+	Key string
 }
 
-func newKeyValueKey(key string) (*keyValueKey, error) {
+func newKeyValueKey(key string) (*KeyValueKey, error) {
 	err := validateLength(key, "key", MinLengthKey, MaxLengthKey)
 	if err != nil {
 		return nil, err
 	}
-	return &keyValueKey{key: key}, nil
+	return &KeyValueKey{Key: key}, nil
 }
 
-type keyValueValue struct {
-	value string
+type KeyValueValue struct {
+	Value string
 }
 
-func newKeyValueValue(value string) (*keyValueValue, error) {
+func newKeyValueValue(value string) (*KeyValueValue, error) {
 	err := validateLength(value, "value", MinLengthValue, MaxLengthValue)
 	if err != nil {
 		return nil, err
 	}
-	return &keyValueValue{value: value}, nil
+	return &KeyValueValue{Value: value}, nil
 }
 
 // AggregateRoot
 
 type KeyValue struct {
-	key   *keyValueKey
-	value *keyValueValue
+	Key   *KeyValueKey
+	Value *KeyValueValue
 }
 
 func newKeyValue(key string, value string) (*KeyValue, error) {
@@ -56,8 +56,8 @@ func newKeyValue(key string, value string) (*KeyValue, error) {
 		return nil, err
 	}
 	return &KeyValue{
-		key:   keyValue,
-		value: valueValue,
+		Key:   keyValue,
+		Value: valueValue,
 	}, nil
 }
 
