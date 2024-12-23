@@ -18,8 +18,7 @@ type InMemoryKeyValueRepository struct {
 func NewInMemoryKeyValueRepository() *InMemoryKeyValueRepository {
 	return &InMemoryKeyValueRepository{
 		KeyValueMap: KeyValueMap{
-			//TODO: Remove testing key when e2e POST action is implemented
-			keyToValueMap: map[string]string{"TestingKey": "TestingValue"},
+			keyToValueMap: make(map[string]string),
 		},
 	}
 }

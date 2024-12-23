@@ -65,16 +65,15 @@ func TestGetKeyValueBadRequestOnLongKey(t *testing.T) {
 
 func TestGetKeyValueFoundsValue(t *testing.T) {
 	// given
-	expectedKey := "TestingKey"
-	expectedValue := "TestingValue"
+	presentExpectedKey, presentExpectedValue := keyValueObjectMother.createRandom()
 
 	// when
-	response, err := keyValueClient.GetKeyValueByKeyWithResponse(context.TODO(), expectedKey)
+	response, err := keyValueClient.GetKeyValueByKeyWithResponse(context.TODO(), presentExpectedKey)
 
 	// then
 	require.Nil(t, err)
 	require.Equal(t, http.StatusOK, response.StatusCode())
-	expectedResponse := &client.KeyValueResponse{expectedKey: expectedValue}
+	expectedResponse := &client.KeyValueResponse{presentExpectedKey: presentExpectedValue}
 	require.Equal(t, expectedResponse, response.JSON200)
 }
 
