@@ -8,6 +8,7 @@ require (
 	github.com/labstack/gommon v0.4.2
 	github.com/oapi-codegen/nethttp-middleware v1.0.2
 	github.com/oapi-codegen/runtime v1.1.1
+	golang.org/x/exp v0.0.0-20241217172543-b2144cdd0a67
 )
 
 require (
