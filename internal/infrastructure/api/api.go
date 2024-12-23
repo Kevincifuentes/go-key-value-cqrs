@@ -23,6 +23,18 @@ import (
 type Server struct {
 }
 
+func InitHandler(openApiRelativePath string) http.Handler {
+	keyValueServer := KeyValueServer()
+	serveMux := http.NewServeMux()
+
+	handler := HandlerFromMux(keyValueServer, serveMux)
+	openApiFilepath, _ := filepath.Abs(openApiRelativePath)
+	swagger, _ := openapi3.NewLoader().LoadFromFile(openApiFilepath)
+	validatorMiddleware := middleware.OapiRequestValidatorWithOptions(swagger,
+		&middleware.Options{ErrorHandler: handleErrorMessage})
+	return validatorMiddleware(handler)
+}
+
 func initializeQueryBus(keyValueReader *persistence.InMemoryKeyValueRepository) {
 	err := querybus.Load(getvalue.QueryHandler{KeyValueReader: keyValueReader})
 	if err != nil {
@@ -43,18 +55,6 @@ func KeyValueServer() Server {
 	initializeQueryBus(inMemoryKeyValueRepository)
 	initializeCommandBus(inMemoryKeyValueRepository)
 	return Server{}
-}
-
-func InitHandler(openApiRelativePath string) http.Handler {
-	keyValueServer := KeyValueServer()
-	serveMux := http.NewServeMux()
-
-	handler := HandlerFromMux(keyValueServer, serveMux)
-	openApiFilepath, _ := filepath.Abs(openApiRelativePath)
-	swagger, _ := openapi3.NewLoader().LoadFromFile(openApiFilepath)
-	validatorMiddleware := middleware.OapiRequestValidatorWithOptions(swagger,
-		&middleware.Options{ErrorHandler: handleErrorMessage})
-	return validatorMiddleware(handler)
 }
 
 // GetKeyValueByKey (GET /keys/:key)
@@ -81,6 +81,11 @@ func (Server) PostKey(responseWriter http.ResponseWriter, request *http.Request)
 	responseWriter.WriteHeader(http.StatusNoContent)
 }
 
+// DeleteKeyValueByKey (DELETE /keys/{key})
+func (Server) DeleteKeyValueByKey(responseWriter http.ResponseWriter, _ *http.Request, _ string) {
+	responseWriter.WriteHeader(http.StatusNotImplemented)
+}
+
 func validateAddKeyValueRequest(request *http.Request) (AddKeyRequest, string, error) {
 	var addKeyRequest AddKeyRequest
 	if err := json.NewDecoder(request.Body).Decode(&addKeyRequest); err != nil {
@@ -91,11 +96,6 @@ func validateAddKeyValueRequest(request *http.Request) (AddKeyRequest, string, e
 		return nil, "", model.NewApiValidationError(addKeyRequest, "Only one key is allowed")
 	}
 	return addKeyRequest, maps.Keys(addKeyRequest)[0], nil
-}
-
-// DeleteKeyValueByKey (DELETE /keys/{key})
-func (Server) DeleteKeyValueByKey(responseWriter http.ResponseWriter, _ *http.Request, _ string) {
-	responseWriter.WriteHeader(http.StatusNotImplemented)
 }
 
 func handleResponse(writer http.ResponseWriter, response any, successfulStatusCode int, err error) {
@@ -128,6 +128,7 @@ func handleError(writer http.ResponseWriter, err error) {
 	isKeyAlreadyExists := errors.As(err, &keyAlreadyExists)
 	if isKeyAlreadyExists {
 		handleErrorMessage(writer, err.Error(), http.StatusConflict)
+		return
 	}
 
 	handleErrorMessage(writer, err.Error(), http.StatusInternalServerError)
