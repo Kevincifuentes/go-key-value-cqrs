@@ -2,6 +2,7 @@
 mods=$(go list -f '{{.Dir}}' -m | xargs)
 pwd=$(echo "$PWD")
 assets_path=$pwd/assets
+mkdir -p $assets_path
 final_coverage_file="$assets_path"/final.out
 echo "mode: set" > $final_coverage_file
 for mod in $mods; do
