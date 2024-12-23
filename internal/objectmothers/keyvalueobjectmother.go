@@ -17,3 +17,11 @@ func (objectMother *KeyValueObjectMother) CreateRandom() domain.KeyValue {
 		Value: &domain.KeyValueValue{Value: expectedValue},
 	}
 }
+
+func (objectMother *KeyValueObjectMother) WithKey(expectedKey string) domain.KeyValue {
+	expectedValue := objectMother.FakerInstance.Person().Name()
+	return domain.KeyValue{
+		Key:   &domain.KeyValueKey{Key: expectedKey},
+		Value: &domain.KeyValueValue{Value: expectedValue},
+	}
+}
