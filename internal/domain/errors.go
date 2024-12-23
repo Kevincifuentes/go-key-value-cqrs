@@ -43,3 +43,17 @@ func NewKeyNotFoundError(key string) error {
 		fmt.Sprintf("No value found with key '%v'", key),
 	}
 }
+
+type KeyExistsError struct {
+	message string
+}
+
+func (e KeyExistsError) Error() string {
+	return e.message
+}
+
+func NewKeyExistsError(key string) error {
+	return &KeyExistsError{
+		fmt.Sprintf("Key '%v' already exists", key),
+	}
+}
