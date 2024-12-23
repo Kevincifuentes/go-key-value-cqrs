@@ -1,7 +1,7 @@
 package addkeyvalue
 
 import (
-	"go-key-value-cqrs/application/queries/cqrs/commandbus"
+	"go-key-value-cqrs/application/cqrs/commandbus"
 )
 
 type Command struct {

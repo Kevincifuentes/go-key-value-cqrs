@@ -1,7 +1,7 @@
 package getvalue
 
 import (
-	"go-key-value-cqrs/application/queries/cqrs/querybus"
+	"go-key-value-cqrs/application/cqrs/querybus"
 )
 
 type Query struct {
