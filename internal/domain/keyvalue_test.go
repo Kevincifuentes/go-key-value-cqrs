@@ -22,10 +22,10 @@ func TestKeyValueConstructorThrowKeyLengthError(t *testing.T) {
 			keyValue, err := NewKeyValue(actualTestKey, validValue)
 
 			// then
-			var invalidLengthError *InvalidLengthError
+			var invalidLengthError *KeyValueDomainError
 			isInvalidLengthError := errors.As(err, &invalidLengthError)
 			if err == nil || !isInvalidLengthError || !strings.Contains(invalidLengthError.Error(), "'key'") {
-				t.Logf("expected an InvalidLengthError: , actual keyValue: %v, actual error: %v", keyValue, err)
+				t.Logf("expected an KeyValueDomainError: , actual keyValue: %v, actual error: %v", keyValue, err)
 				t.Fail()
 			}
 		})
@@ -43,10 +43,10 @@ func TestKeyValueConstructorThrowValueLengthError(t *testing.T) {
 			keyValue, err := NewKeyValue(validKey, actualTestValue)
 
 			// then
-			var invalidLengthError *InvalidLengthError
+			var invalidLengthError *KeyValueDomainError
 			isInvalidLengthError := errors.As(err, &invalidLengthError)
 			if err == nil || !isInvalidLengthError || !strings.Contains(invalidLengthError.Error(), "'value'") {
-				t.Logf("expected an InvalidLengthError: , actual keyValue: %v, actual error: %v", keyValue, err)
+				t.Logf("expected an KeyValueDomainError: , actual keyValue: %v, actual error: %v", keyValue, err)
 				t.Fail()
 			}
 		})
@@ -63,7 +63,7 @@ func TestKeyValueConstructorShouldConstructWithoutError(t *testing.T) {
 
 	// then
 	if err != nil || keyValue.Key.Key != validKey || keyValue.Value.Value != validValue {
-		t.Logf("expected an InvalidLengthError: , actual keyValue: %v, actual error: %v", keyValue, err)
+		t.Logf("expected an KeyValueDomainError: , actual keyValue: %v, actual error: %v", keyValue, err)
 		t.Fail()
 	}
 }

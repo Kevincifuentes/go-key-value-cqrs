@@ -72,7 +72,7 @@ func TestAddKeyValueCommandReturnsDomainError(t *testing.T) {
 	err := commandbus.Execute(command)
 
 	// then
-	var invalidLengthError *domain.InvalidLengthError
+	var invalidLengthError *domain.KeyValueDomainError
 	isInvalidLengthError := errors.As(err, &invalidLengthError)
 	if err == nil || !isInvalidLengthError {
 		t.Errorf("Test failed! Expected to fail call for %v command. Expected: Error=InvalidLengthError, Actual: Error=%v",
