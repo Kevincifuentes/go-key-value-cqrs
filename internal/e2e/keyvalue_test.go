@@ -119,5 +119,5 @@ func TestPostKeyValueShouldReturnsBadRequestOnLongValues(t *testing.T) {
 	// then
 	require.Nil(t, err)
 	require.Equal(t, http.StatusBadRequest, response.StatusCode())
-	require.Contains(t, "parameter \"key\" in path has an error: maximum string length is 200", string(response.Body))
+	require.Contains(t, string(response.Body), "expected 'key' to have a value between 1 and 200")
 }
