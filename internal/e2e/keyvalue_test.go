@@ -39,10 +39,10 @@ func TestMain(testing *testing.M) {
 
 func TestGetKeyValueShouldNotBeFound(t *testing.T) {
 	// given
-	expectedKey := fakerInstance.Person().Name()
+	unknownKey := fakerInstance.Person().Name()
 
 	// when
-	response, err := keyValueClient.GetKeyValueByKeyWithResponse(context.TODO(), expectedKey)
+	response, err := keyValueClient.GetKeyValueByKeyWithResponse(context.TODO(), unknownKey)
 
 	// then
 	require.Nil(t, err)
@@ -135,4 +135,47 @@ func TestPostKeyValueShouldReturnsBadRequestOnMoreThanOneKey(t *testing.T) {
 	require.Nil(t, err)
 	require.Equal(t, http.StatusBadRequest, response.StatusCode())
 	require.Contains(t, string(response.Body), "Only one key is allowed")
+}
+
+func TestDeleteKeyValueShouldBeSuccessful(t *testing.T) {
+	// TODO: Remove when DELETE implemented
+	t.Skip("Skipping test until DELETE functionality is implemented")
+	// given
+	alreadyPresentExpectedKey, _ := keyValueObjectMother.createRandom()
+
+	// when
+	response, err := keyValueClient.DeleteKeyValueByKeyWithResponse(context.TODO(), alreadyPresentExpectedKey)
+
+	// then
+	require.Nil(t, err)
+	require.Equal(t, http.StatusNoContent, response.StatusCode())
+	require.Equal(t, http.NoBody, response.HTTPResponse.Body)
+}
+
+func TestDeleteKeyValueShouldReturnBadRequestOnLongKey(t *testing.T) {
+	// given
+	tooLongKey := fakerInstance.RandomStringWithLength(maxKeyLength + 1)
+
+	// when
+	response, err := keyValueClient.DeleteKeyValueByKeyWithResponse(context.TODO(), tooLongKey)
+
+	// then
+	require.Nil(t, err)
+	require.Equal(t, http.StatusBadRequest, response.StatusCode())
+	require.Contains(t, string(response.Body), "maximum string length is 200")
+}
+
+func TestDeleteKeyValueShouldReturnNotFoundOnMissingKey(t *testing.T) {
+	// TODO: Remove when DELETE implemented
+	t.Skip("Skipping test until DELETE functionality is implemented")
+	// given
+	unknownKey := fakerInstance.UUID().V4()
+
+	// when
+	response, err := keyValueClient.DeleteKeyValueByKeyWithResponse(context.TODO(), unknownKey)
+
+	// then
+	require.Nil(t, err)
+	require.Equal(t, http.StatusNotFound, response.StatusCode())
+	require.Equal(t, http.NoBody, response.HTTPResponse.Body)
 }
