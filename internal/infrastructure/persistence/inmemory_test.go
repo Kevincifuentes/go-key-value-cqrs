@@ -140,7 +140,8 @@ func TestDeleteKeyNotFoundKey(t *testing.T) {
 	// then
 	var keyNotFoundError *domain.KeyNotFoundError
 	isKeyNotFoundError := errors.As(deleteErr, &keyNotFoundError)
-	if deleteErr == nil || !isKeyNotFoundError {
+	expectedStringError := fmt.Sprintf("No value found with key '%v'", unknownKey)
+	if deleteErr == nil || !isKeyNotFoundError || keyNotFoundError.Error() != expectedStringError {
 		t.Logf(
 			"expected KeyNotFoundError on DELETE: actualError=%v", deleteErr)
 		t.Fail()
