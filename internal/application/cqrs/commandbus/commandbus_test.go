@@ -2,7 +2,6 @@ package commandbus
 
 import (
 	"errors"
-	"github.com/labstack/gommon/log"
 	"strings"
 	"testing"
 )
@@ -72,10 +71,7 @@ var mock *testInterfaceMock
 func registerQueries() {
 	mock = &testInterfaceMock{numberOfCalls: 0}
 	handler := TestCommandHandler{mock}
-	err := Load(handler)
-	if err != nil {
-		log.Warnf("Error loading command handler %v. Error=%v", handler, err)
-	}
+	Load(handler)
 }
 
 func TestCommandResolvedCorrectly(t *testing.T) {
@@ -120,7 +116,7 @@ func TestCommandNotFound(t *testing.T) {
 
 func TestHandlerTypeInvalid(t *testing.T) {
 	// given
-	_ = Load(TestAnotherCommandHandler{})
+	Load(TestAnotherCommandHandler{})
 	expectedId := "TestCommandNotFound"
 	command := anotherTestWithSameNameCommand{expectedId}
 

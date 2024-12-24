@@ -3,7 +3,6 @@ package addkeyvalue
 import (
 	"errors"
 	"github.com/jaswdr/faker/v2"
-	"github.com/labstack/gommon/log"
 	"go-key-value-cqrs/application/cqrs/commandbus"
 	"go-key-value-cqrs/domain"
 	"go-key-value-cqrs/objectmothers"
@@ -35,10 +34,7 @@ var keyValueObjectMother = objectmothers.KeyValueObjectMother{FakerInstance: &fa
 func registerCommand(expectedValue *domain.KeyValue, expectedError error) {
 	mock = testInterfaceMock{numberOfCalls: 0, expectedKeyValue: expectedValue, expectedError: expectedError}
 	handler := CommandHandler{&mock}
-	err := commandbus.Load(handler)
-	if err != nil {
-		log.Warnf("Error loading command handler %v. Error=%v", handler, err)
-	}
+	commandbus.Load(handler)
 }
 
 func TestAddKeyValueCommandResolvedCorrectly(t *testing.T) {
