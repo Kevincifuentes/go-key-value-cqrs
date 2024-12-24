@@ -22,11 +22,15 @@ func (mock *testInterfaceMock) Add(keyValue domain.KeyValue) error {
 	return mock.expectedError
 }
 
+func (mock *testInterfaceMock) Delete(_ string) error {
+	return nil
+}
+
 const maxLengthKey = 200
 
 var mock testInterfaceMock
 var fakerInstance = faker.New()
-var keyValueObjectMother objectmothers.KeyValueObjectMother = objectmothers.KeyValueObjectMother{FakerInstance: &fakerInstance}
+var keyValueObjectMother = objectmothers.KeyValueObjectMother{FakerInstance: &fakerInstance}
 
 func registerCommand(expectedValue *domain.KeyValue, expectedError error) {
 	mock = testInterfaceMock{numberOfCalls: 0, expectedKeyValue: expectedValue, expectedError: expectedError}
