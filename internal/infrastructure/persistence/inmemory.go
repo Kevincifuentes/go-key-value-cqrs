@@ -47,3 +47,16 @@ func (repository *InMemoryKeyValueRepository) Add(keyValue domain.KeyValue) erro
 	repository.KeyValueMap.keyToValueMap[keyToAdd] = keyValue.Value.Value
 	return nil
 }
+
+func (repository *InMemoryKeyValueRepository) Delete(key string) error {
+	barrier := &repository.KeyValueMap.barrier
+	barrier.Lock()
+	defer barrier.Unlock()
+
+	if _, exists := repository.KeyValueMap.keyToValueMap[key]; !exists {
+		return domain.NewKeyNotFoundError(key)
+	}
+
+	delete(repository.KeyValueMap.keyToValueMap, key)
+	return nil
+}

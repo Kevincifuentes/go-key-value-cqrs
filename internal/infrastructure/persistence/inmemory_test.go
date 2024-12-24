@@ -38,7 +38,7 @@ func TestKeyValueFoundWithRepository(t *testing.T) {
 	expectedValue := expectedKeyValue.Value.Value
 	if err != nil || keyValueView.Value != expectedValue {
 		t.Logf(
-			"expected no error and expected value %s: actual value=%v, actual error=%v",
+			"expected no error and expected value %s: actual value=%v, actualError=%v",
 			expectedValue, keyValueView, err)
 		t.Fail()
 	}
@@ -54,7 +54,7 @@ func TestKeyValueNotFoundWithRepository(t *testing.T) {
 	// then
 	if err == nil || keyValueView != (domain.KeyValueView{}) {
 		t.Logf(
-			"expected no error and expected value %s: actual value=%v, actual error=%v",
+			"expected no error and expected value %s: actual value=%v, actualError=%v",
 			defaultTestValue, keyValueView, err)
 		t.Fail()
 	}
@@ -74,7 +74,7 @@ func TestAddNewKeySuccessfully(t *testing.T) {
 	if err != nil || keyValueView.Value != expectedValue || keyValueView.Key != expectedKey {
 		t.Logf(
 			"expected no error and receive (expectedKey=%v, expectedValue=%v): "+
-				"actual error=%v, actualKey=%v, actualValue=%v",
+				"actualError=%v, actualKey=%v, actualValue=%v",
 			expectedKey, expectedValue, err, keyValueView.Key, keyValueView.Value)
 		t.Fail()
 	}
@@ -99,6 +99,50 @@ func TestAddNewKeyFailsOnExistingKey(t *testing.T) {
 		t.Logf(
 			"expected error and KeyExistsError type with message (expectedMessage=%v): actualError=%v",
 			expectedStringError, err)
+		t.Fail()
+	}
+}
+
+func TestDeleteKeySuccessfully(t *testing.T) {
+	// given
+	expectedKeyValue := keyValueObjectMother.CreateRandom()
+	expectedKey := expectedKeyValue.Key.Key
+	_ = repositoryWriter.Add(expectedKeyValue)
+
+	// when
+	deleteErr := repositoryWriter.Delete(expectedKey)
+
+	// then
+	if deleteErr != nil {
+		t.Logf(
+			"expected no error on DELETE: actualError=%v", deleteErr)
+		t.Fail()
+	}
+	//and
+	keyValueView, getErr := repositoryReader.Get(expectedKey)
+	var keyNotFoundError *domain.KeyNotFoundError
+	isKeyNotFoundError := errors.As(getErr, &keyNotFoundError)
+	if getErr == nil || keyValueView != (domain.KeyValueView{}) || !isKeyNotFoundError {
+		t.Logf(
+			"expected KeyNotFoundError and no KeyValueView: actualKeyValueView=%v, actualError=%v",
+			keyValueView, getErr)
+		t.Fail()
+	}
+}
+
+func TestDeleteKeyNotFoundKey(t *testing.T) {
+	// given
+	unknownKey := fakerInstance.UUID().V4()
+
+	// when
+	deleteErr := repositoryWriter.Delete(unknownKey)
+
+	// then
+	var keyNotFoundError *domain.KeyNotFoundError
+	isKeyNotFoundError := errors.As(deleteErr, &keyNotFoundError)
+	if deleteErr == nil || !isKeyNotFoundError {
+		t.Logf(
+			"expected KeyNotFoundError on DELETE: actualError=%v", deleteErr)
 		t.Fail()
 	}
 }
