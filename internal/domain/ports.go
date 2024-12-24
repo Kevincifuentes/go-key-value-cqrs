@@ -6,4 +6,5 @@ type KeyValueReader interface {
 
 type KeyValueWriter interface {
 	Add(keyValue KeyValue) error
+	Delete(key string) error
 }
