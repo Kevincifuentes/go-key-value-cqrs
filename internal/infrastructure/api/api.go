@@ -44,17 +44,8 @@ func initializeQueryBus(keyValueReader *persistence.InMemoryKeyValueRepository) 
 }
 
 func initializeCommandBus(keyValueWriter *persistence.InMemoryKeyValueRepository) {
-	var errs []error
-
-	if err := commandbus.Load(addkeyvalue.CommandHandler{KeyValueWriter: keyValueWriter}); err != nil {
-		errs = append(errs, err)
-	}
-	if err := commandbus.Load(deletekeyvalue.CommandHandler{KeyValueWriter: keyValueWriter}); err != nil {
-		errs = append(errs, err)
-	}
-	if len(errs) > 0 {
-		log.Errorf("Error loading CommandBus: %v", errs)
-	}
+	commandbus.Load(addkeyvalue.CommandHandler{KeyValueWriter: keyValueWriter})
+	commandbus.Load(deletekeyvalue.CommandHandler{KeyValueWriter: keyValueWriter})
 }
 
 func KeyValueServer() Server {

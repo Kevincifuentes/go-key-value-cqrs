@@ -8,10 +8,9 @@ import (
 // Using sync.Map because we will initial few writes and after that only reads
 var registeredCommands = &sync.Map{}
 
-func Load[T Command](handler CommandHandler[T]) error {
+func Load[T Command](handler CommandHandler[T]) {
 	var command T
 	registeredCommands.Store(command.Config().Name, handler)
-	return nil
 }
 
 func Execute[T Command](command T) (err error) {
