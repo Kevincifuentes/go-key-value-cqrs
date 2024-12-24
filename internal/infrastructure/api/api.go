@@ -11,6 +11,7 @@ import (
 	"go-key-value-cqrs/application/cqrs/commandbus"
 	"go-key-value-cqrs/application/cqrs/querybus"
 	"go-key-value-cqrs/application/keyvalue/addkeyvalue"
+	"go-key-value-cqrs/application/keyvalue/deletekeyvalue"
 	"go-key-value-cqrs/application/keyvalue/getvalue"
 	"go-key-value-cqrs/domain"
 	"go-key-value-cqrs/infrastructure/api/model"
@@ -38,14 +39,21 @@ func InitHandler(openApiRelativePath string) http.Handler {
 func initializeQueryBus(keyValueReader *persistence.InMemoryKeyValueRepository) {
 	err := querybus.Load(getvalue.QueryHandler{KeyValueReader: keyValueReader})
 	if err != nil {
-		log.Errorf("Error loading query bus %s", err)
+		log.Errorf("Error loading QueryBus %v", err)
 	}
 }
 
 func initializeCommandBus(keyValueWriter *persistence.InMemoryKeyValueRepository) {
-	err := commandbus.Load(addkeyvalue.CommandHandler{KeyValueWriter: keyValueWriter})
-	if err != nil {
-		log.Errorf("Error loading query bus %s", err)
+	var errs []error
+
+	if err := commandbus.Load(addkeyvalue.CommandHandler{KeyValueWriter: keyValueWriter}); err != nil {
+		errs = append(errs, err)
+	}
+	if err := commandbus.Load(deletekeyvalue.CommandHandler{KeyValueWriter: keyValueWriter}); err != nil {
+		errs = append(errs, err)
+	}
+	if len(errs) > 0 {
+		log.Errorf("Error loading CommandBus: %v", errs)
 	}
 }
 
@@ -65,6 +73,7 @@ func (Server) GetKeyValueByKey(responseWriter http.ResponseWriter, _ *http.Reque
 
 // PostKey (POST /keys)
 func (Server) PostKey(responseWriter http.ResponseWriter, request *http.Request) {
+	// Necessary because middleware not validating additionalProperties
 	addKeyValue, key, err := validateAddKeyValueRequest(request)
 	if err != nil {
 		handleError(responseWriter, err)
@@ -72,18 +81,13 @@ func (Server) PostKey(responseWriter http.ResponseWriter, request *http.Request)
 	}
 
 	err = commandbus.Execute(addkeyvalue.Command{Key: key, Value: addKeyValue[key]})
-
-	if err != nil {
-		handleError(responseWriter, err)
-		return
-	}
-
-	responseWriter.WriteHeader(http.StatusNoContent)
+	handleEmptyBodyResponse(responseWriter, http.StatusNoContent, err)
 }
 
 // DeleteKeyValueByKey (DELETE /keys/{key})
-func (Server) DeleteKeyValueByKey(responseWriter http.ResponseWriter, _ *http.Request, _ string) {
-	responseWriter.WriteHeader(http.StatusNotImplemented)
+func (Server) DeleteKeyValueByKey(responseWriter http.ResponseWriter, _ *http.Request, key string) {
+	err := commandbus.Execute(deletekeyvalue.Command{Key: key})
+	handleEmptyBodyResponse(responseWriter, http.StatusNoContent, err)
 }
 
 func validateAddKeyValueRequest(request *http.Request) (AddKeyRequest, string, error) {
@@ -136,6 +140,15 @@ func handleError(writer http.ResponseWriter, err error) {
 
 func handleErrorMessage(writer http.ResponseWriter, message string, statusCode int) {
 	writeJSON(writer, statusCode, model.ErrorResponse{Message: message})
+}
+
+func handleEmptyBodyResponse(responseWriter http.ResponseWriter, statusCode int, err error) {
+	if err != nil {
+		handleError(responseWriter, err)
+		return
+	}
+
+	responseWriter.WriteHeader(statusCode)
 }
 
 func writeJSON(writer http.ResponseWriter, status int, data interface{}) {

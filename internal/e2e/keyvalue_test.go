@@ -138,8 +138,6 @@ func TestPostKeyValueShouldReturnsBadRequestOnMoreThanOneKey(t *testing.T) {
 }
 
 func TestDeleteKeyValueShouldBeSuccessful(t *testing.T) {
-	// TODO: Remove when DELETE implemented
-	t.Skip("Skipping test until DELETE functionality is implemented")
 	// given
 	alreadyPresentExpectedKey, _ := keyValueObjectMother.createRandom()
 
@@ -166,8 +164,6 @@ func TestDeleteKeyValueShouldReturnBadRequestOnLongKey(t *testing.T) {
 }
 
 func TestDeleteKeyValueShouldReturnNotFoundOnMissingKey(t *testing.T) {
-	// TODO: Remove when DELETE implemented
-	t.Skip("Skipping test until DELETE functionality is implemented")
 	// given
 	unknownKey := fakerInstance.UUID().V4()
 
