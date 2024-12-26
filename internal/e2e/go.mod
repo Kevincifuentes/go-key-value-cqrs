@@ -4,6 +4,7 @@ go 1.23.4
 
 require (
 	github.com/jaswdr/faker/v2 v2.3.3
+	github.com/joho/godotenv v1.5.1
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/stretchr/testify v1.9.0
 )

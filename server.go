@@ -1,10 +1,9 @@
 package main
 
 import (
+	"go-key-value-cqrs/infrastructure/api"
 	"log"
 	"net/http"
-
-	"go-key-value-cqrs/infrastructure/api"
 )
 
 const OpenAPISpecRelativePath = "./api/keyvalue/api.yml"
