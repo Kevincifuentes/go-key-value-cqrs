@@ -4,7 +4,11 @@ go 1.23.4
 
 replace go-key-value-cqrs/infrastructure => ./internal/infrastructure
 
-require go-key-value-cqrs/infrastructure v0.0.0-00010101000000-000000000000
+require (
+	github.com/caarlos0/env/v6 v6.10.1
+	github.com/joho/godotenv v1.5.1
+	go-key-value-cqrs/infrastructure v0.0.0-00010101000000-000000000000
+)
 
 require (
 	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
@@ -25,6 +29,7 @@ require (
 	github.com/perimeterx/marshmallow v1.1.5 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
+	golang.org/x/exp v0.0.0-20241217172543-b2144cdd0a67 // indirect
 	golang.org/x/sys v0.15.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

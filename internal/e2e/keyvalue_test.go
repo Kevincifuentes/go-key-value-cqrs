@@ -51,7 +51,7 @@ func TestMain(testing *testing.M) {
 }
 
 func loadEnvFile() {
-	err := godotenv.Load(".env.test.local")
+	err := godotenv.Load(".env")
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
