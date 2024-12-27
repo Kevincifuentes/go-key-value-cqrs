@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"go-key-value-cqrs/infrastructure/api"
 	"go-key-value-cqrs/infrastructure/api/config"
 	"log"
@@ -12,10 +11,11 @@ func main() {
 	applicationConfig := config.RetrieveConfiguration()
 	handler := api.InitHandler(applicationConfig)
 
+	serverAddress := applicationConfig.GetServerAddress()
 	server := &http.Server{
 		Handler: handler,
-		Addr:    fmt.Sprintf("0.0.0.0:%v", applicationConfig.Port),
+		Addr:    serverAddress,
 	}
-	log.Printf("Starting server on port %v\n", applicationConfig.Port)
+	log.Printf("Starting KeyValueServer on %v\n", serverAddress)
 	log.Println(server.ListenAndServe())
 }

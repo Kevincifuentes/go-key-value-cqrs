@@ -1,15 +1,18 @@
 package config
 
 import (
+	"fmt"
 	"github.com/caarlos0/env/v6"
 	"github.com/joho/godotenv"
 	"log"
 )
 
 type Config struct {
-	Port        int    `env:"SERVER_PORT,required" envDefault:"8080"`
-	OpenApiPath string `env:"OPENAPI_RELATIVE_PATH,required" envDefault:"./api/keyvalue/api.yml"`
-	DebugMode   bool   `env:"DEBUG_MODE" envDefault:"false"`
+	Host            string `env:"SERVER_HOST,required" envDefault:"localhost"`
+	Port            int    `env:"SERVER_PORT,required" envDefault:"8080"`
+	OpenApiPath     string `env:"OPENAPI_RELATIVE_PATH,required" envDefault:"./api/keyvalue/api.yml"`
+	DebugServerPort int    `env:"DEBUG_SERVER_PORT" envDefault:"8081"`
+	DebugServerHost string `env:"DEBUG_SERVER_HOST" envDefault:"localhost"`
 }
 
 func RetrieveConfiguration() Config {
@@ -23,4 +26,12 @@ func RetrieveConfiguration() Config {
 		log.Fatalf("Unable to parse ennvironment variables: %e", err)
 	}
 	return cfg
+}
+
+func (config Config) GetDebugServerAddress() string {
+	return fmt.Sprintf("%s:%d", config.DebugServerHost, config.DebugServerPort)
+}
+
+func (config Config) GetServerAddress() string {
+	return fmt.Sprintf("%s:%d", config.Host, config.Port)
 }

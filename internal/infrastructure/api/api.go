@@ -15,7 +15,6 @@ import (
 	"go-key-value-cqrs/application/keyvalue/getvalue"
 	"go-key-value-cqrs/domain"
 	"go-key-value-cqrs/infrastructure/api/config"
-	"go-key-value-cqrs/infrastructure/api/metrics"
 	"go-key-value-cqrs/infrastructure/api/model"
 	"go-key-value-cqrs/infrastructure/persistence"
 	"golang.org/x/exp/maps"
@@ -28,13 +27,10 @@ type Server struct {
 
 func InitHandler(applicationConfiguration config.Config) http.Handler {
 	keyValueServer := KeyValueServer()
-	serveMux := &http.DefaultServeMux
+	serveMux := http.NewServeMux()
 
 	var handler http.Handler
-	handler = HandlerFromMux(keyValueServer, *serveMux)
-	if applicationConfiguration.DebugMode {
-		handler = metrics.Metrics(handler)
-	}
+	handler = HandlerFromMux(keyValueServer, serveMux)
 	openApiFilepath, _ := filepath.Abs(applicationConfiguration.OpenApiPath)
 	swagger, _ := openapi3.NewLoader().LoadFromFile(openApiFilepath)
 	validatorMiddleware := middleware.OapiRequestValidatorWithOptions(swagger,
