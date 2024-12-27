@@ -4,11 +4,14 @@ package e2e
 
 import (
 	"context"
+	"github.com/joho/godotenv"
 	"go-key-value-cqrs/e2e/client"
 	"go-key-value-cqrs/infrastructure/api"
 	"log"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"strconv"
 	"testing"
 
 	"github.com/jaswdr/faker/v2"
@@ -24,17 +27,34 @@ var clientError error
 var keyValueObjectMother KeyValueObjectMother
 
 func TestMain(testing *testing.M) {
-	testServer = httptest.NewServer(api.InitHandler("../../api/keyvalue/api.yml"))
+	loadEnvFile()
+	http.DefaultTransport.(*http.Transport).MaxIdleConnsPerHost = 100
+
+	var hostUrl string
+	if loadTestServer, _ := strconv.ParseBool(os.Getenv("LOAD_TEST_SERVER")); !loadTestServer {
+		testServer = httptest.NewServer(api.InitHandler(os.Getenv("OPENAPI_RELATIVE_PATH")))
+		hostUrl = testServer.URL
+	} else {
+		hostUrl = os.Getenv("LOCAL_HOST_URL")
+	}
+
+	log.Printf("Targeting server on %s...\n", hostUrl)
 
 	hc := http.Client{}
-
-	keyValueClient, clientError = client.NewClientWithResponses(testServer.URL, client.WithHTTPClient(&hc))
+	keyValueClient, clientError = client.NewClientWithResponses(hostUrl, client.WithHTTPClient(&hc))
 	keyValueObjectMother = KeyValueObjectMother{fakerInstance: &fakerInstance, client: keyValueClient}
 	if clientError != nil {
 		log.Fatal(clientError)
 	}
 
 	testing.Run()
+}
+
+func loadEnvFile() {
+	err := godotenv.Load(".env.test.local")
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 }
 
 func TestGetKeyValueShouldNotBeFound(t *testing.T) {
@@ -174,4 +194,25 @@ func TestDeleteKeyValueShouldReturnNotFoundOnMissingKey(t *testing.T) {
 	require.Nil(t, err)
 	require.Equal(t, http.StatusNotFound, response.StatusCode())
 	require.Equal(t, http.NoBody, response.HTTPResponse.Body)
+}
+
+func BenchmarkGetKeyValueWithRandomKeys(b *testing.B) {
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			// given
+			unknownKey := fakerInstance.UUID().V4()
+
+			// when
+			_, _ = keyValueClient.GetKeyValueByKeyWithResponse(context.TODO(), unknownKey)
+		}
+	})
+}
+
+func BenchmarkPostKeyValueWithRandomKeys(b *testing.B) {
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			// when
+			keyValueObjectMother.createRandom()
+		}
+	})
 }

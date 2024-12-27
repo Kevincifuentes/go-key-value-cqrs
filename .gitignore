@@ -8,5 +8,8 @@ assets
 # goenv
 .go-version
 
+# env
+internal/e2e/.env.test.local
+
 # other
 *.iml

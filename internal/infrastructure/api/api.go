@@ -26,9 +26,9 @@ type Server struct {
 
 func InitHandler(openApiRelativePath string) http.Handler {
 	keyValueServer := KeyValueServer()
-	serveMux := http.NewServeMux()
+	serveMux := &http.DefaultServeMux
 
-	handler := HandlerFromMux(keyValueServer, serveMux)
+	handler := HandlerFromMux(keyValueServer, *serveMux)
 	openApiFilepath, _ := filepath.Abs(openApiRelativePath)
 	swagger, _ := openapi3.NewLoader().LoadFromFile(openApiFilepath)
 	validatorMiddleware := middleware.OapiRequestValidatorWithOptions(swagger,
