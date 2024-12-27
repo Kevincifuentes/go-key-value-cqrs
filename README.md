@@ -39,3 +39,14 @@ ok      go-key-value-cqrs/application/queries/keyvalue/getvalue 0.342s  coverage
 
 When finished, you can access to ```go-key-value-cqrs/assets/coverage.html``` to see a user-friendly coverage report for 
 all the modules.
+
+# Debug Mode
+The server can be started with the debug mode on, both for metrics or profiling. We just need to follow two steps:
+* Use DEBUG_MODE configuration to `true` on the env file (by the default it's disabled or `false`)
+* When building the server, we should add a tag of `debug` to add the necessary dependencies (this process is done to 
+avoid importing `pprof` package by default). Consequently, we should build it like so:
+```bash
+go build -o assets/keyvalueserver -tags debug
+```
+
+This will generate an executable with the capabilities described on [pprof documentation](https://pkg.go.dev/net/http/pprof).
