@@ -9,6 +9,31 @@ It will support a Key/Value storage service with REST API capabilities to:
 * Post a new KeyValue
 * Delete a KeyValue
 
+# Run server
+To run the server, you don't need any configuration because it uses default values but if you want to configure it, 
+you will need a `.env` file with at least the following properties:
+```txt
+SERVER_HOST=localhost
+SERVER_PORT=8080
+OPENAPI_RELATIVE_PATH=./api/keyvalue/api.yml
+DEBUG_SERVER_HOST=localhost
+DEBUG_SERVER_PORT=8081
+```
+* SERVER_HOST: usually localhost or 127.0.0.1
+* SERVER_PORT: in which port will the server run
+* OPENAPI_RELATIVE_PATH: this represents the path where the OPENAPI yml file is stored. It is used for Request validation
+middleware.
+* DEBUG_SERVER_HOST (ONLY needed if `debug` tag is used): similar to SERVER_HOST but for profiling
+* DEBUG_SERVER_PORT (ONLY needed if `debug` tag is used): similar to SERVER_PORT but for profiling
+
+Then, you can simply run: 
+```bash
+go run server.go
+```
+or on [DEBUG MODE](#debug-mode):
+```bash
+go run -tags debug server.go
+```
 
 # Run tests
 
