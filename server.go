@@ -1,22 +1,21 @@
 package main
 
 import (
+	"fmt"
 	"go-key-value-cqrs/infrastructure/api"
-	"go-key-value-cqrs/infrastructure/api/metrics"
+	"go-key-value-cqrs/infrastructure/api/config"
 	"log"
 	"net/http"
-	_ "net/http/pprof"
 )
 
-const OpenAPISpecRelativePath = "./api/keyvalue/api.yml"
-
 func main() {
-	handler := api.InitHandler(OpenAPISpecRelativePath)
+	applicationConfig := config.RetrieveConfiguration()
+	handler := api.InitHandler(applicationConfig)
 
 	server := &http.Server{
-		Handler: metrics.Metrics(handler),
-		Addr:    "0.0.0.0:8080",
+		Handler: handler,
+		Addr:    fmt.Sprintf("0.0.0.0:%v", applicationConfig.Port),
 	}
-	log.Println("Starting server on port 8080")
+	log.Printf("Starting server on port %v\n", applicationConfig.Port)
 	log.Println(server.ListenAndServe())
 }

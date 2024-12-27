@@ -4,9 +4,9 @@ package e2e
 
 import (
 	"context"
-	"github.com/joho/godotenv"
 	"go-key-value-cqrs/e2e/client"
 	"go-key-value-cqrs/infrastructure/api"
+	"go-key-value-cqrs/infrastructure/api/config"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -27,12 +27,12 @@ var clientError error
 var keyValueObjectMother KeyValueObjectMother
 
 func TestMain(testing *testing.M) {
-	loadEnvFile()
+	applicationConfiguration := config.RetrieveConfiguration()
 	http.DefaultTransport.(*http.Transport).MaxIdleConnsPerHost = 100
 
 	var hostUrl string
 	if loadTestServer, _ := strconv.ParseBool(os.Getenv("LOAD_TEST_SERVER")); !loadTestServer {
-		testServer = httptest.NewServer(api.InitHandler(os.Getenv("OPENAPI_RELATIVE_PATH")))
+		testServer = httptest.NewServer(api.InitHandler(applicationConfiguration))
 		hostUrl = testServer.URL
 	} else {
 		hostUrl = os.Getenv("LOCAL_HOST_URL")
@@ -48,13 +48,6 @@ func TestMain(testing *testing.M) {
 	}
 
 	testing.Run()
-}
-
-func loadEnvFile() {
-	err := godotenv.Load(".env.test.local")
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
 }
 
 func TestGetKeyValueShouldNotBeFound(t *testing.T) {
