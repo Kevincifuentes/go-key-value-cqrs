@@ -9,7 +9,7 @@ assets
 .go-version
 
 # env
-**/.env*
+.env
 
 # other
 *.iml
