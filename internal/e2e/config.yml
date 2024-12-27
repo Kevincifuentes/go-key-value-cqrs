@@ -1,4 +1,6 @@
 package: client
+output-options:
+  exclude-tags: [pprof]
 output: client/keyvalueclient.gen.go
 generate:
   models: true

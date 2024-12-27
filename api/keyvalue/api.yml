@@ -59,7 +59,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '404':
-          description: Not Found Error when key no present      
+          description: Not Found Error when key no present
   /keys:
     post:
       description: Adds a new entry of KeyValue pair
@@ -67,7 +67,7 @@ paths:
       operationId: postKey
       tags:
         - keyvalue
-      requestBody: 
+      requestBody:
         content:
           'application/json':
             schema:
@@ -79,6 +79,25 @@ paths:
           description: Bad Request when key or value is greater than expected
         '409':
           description: Conflict. Key is already present
+  /debug/pprof:
+    get:
+      description: Profiling route
+      summary: Adds support for certain profiling paths if available
+      operationId: getPprof
+      tags:
+        - pprof
+      responses:
+        '200':
+          description: Returns information related to profiling
+  /debug/{var}:
+    $ref: '#/paths/~1debug~1pprof'
+  /debug/pprof/{anything}:
+    $ref: '#/paths/~1debug~1pprof'
+  /debug/pprof/:
+    $ref: '#/paths/~1debug~1pprof'
+  /debug/pprof/{profile}:
+    $ref: '#/paths/~1debug~1pprof'
+
 components:
   schemas:
     # Separated contracts Request/Response to avoid breaking changes in the future
