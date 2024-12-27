@@ -42,11 +42,19 @@ all the modules.
 
 # Debug Mode
 The server can be started with the debug mode on, both for metrics or profiling. We just need to follow two steps:
-* Use DEBUG_MODE configuration to `true` on the env file (by the default it's disabled or `false`)
+* Set up DEBUG_SERVER configuration to the properties wanted:
+```
+SERVER_HOST=localhost
+SERVER_PORT=8080
+OPENAPI_RELATIVE_PATH=./api/keyvalue/api.yml
+DEBUG_SERVER_HOST=localhost <<<<<
+DEBUG_SERVER_PORT=8081 <<<<<
+```
 * When building the server, we should add a tag of `debug` to add the necessary dependencies (this process is done to 
 avoid importing `pprof` package by default). Consequently, we should build it like so:
 ```bash
 go build -o assets/keyvalueserver -tags debug
 ```
 
-This will generate an executable with the capabilities described on [pprof documentation](https://pkg.go.dev/net/http/pprof).
+This will generate an executable with the capabilities described on 
+[pprof documentation](https://pkg.go.dev/net/http/pprof). You can access all that information on the URL (f.e. http://localhost:8081/debug/pprof/).
