@@ -13,19 +13,20 @@ type ProfilingServer struct {
 	*http.Server
 }
 
-func newProfilingServer(applicationConfig config.Config) *ProfilingServer {
+func newProfilingServer(serverAddress string) *ProfilingServer {
 	return &ProfilingServer{
 		&http.Server{
-			Addr:    applicationConfig.GetDebugServerAddress(),
+			Addr:    serverAddress,
 			Handler: http.DefaultServeMux,
 		},
 	}
 }
 
 func StartProfilingServer(applicationConfig config.Config) {
-	profilingServer := newProfilingServer(applicationConfig)
+	serverAddress := applicationConfig.GetDebugServerAddress()
+	profilingServer := newProfilingServer(serverAddress)
 	go func() {
-		log.Printf("Starting Profiling server on %v\n", applicationConfig.DebugServerPort)
+		log.Printf("Starting Profiling server on %v\n", serverAddress)
 		log.Fatal(profilingServer.ListenAndServe())
 	}()
 }
