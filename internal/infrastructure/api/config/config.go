@@ -31,3 +31,7 @@ func RetrieveConfiguration() Config {
 func (config Config) GetDebugServerAddress() string {
 	return fmt.Sprintf("%s:%d", config.DebugServerHost, config.DebugServerPort)
 }
+
+func (config Config) GetServerAddress() string {
+	return fmt.Sprintf("%s:%d", config.Host, config.Port)
+}
