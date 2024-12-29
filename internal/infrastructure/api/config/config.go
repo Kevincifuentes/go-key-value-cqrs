@@ -18,7 +18,7 @@ type Config struct {
 func RetrieveConfiguration() Config {
 	err := godotenv.Load(".env")
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		log.Println("No .env file found. Using default environment variables...")
 	}
 	cfg := Config{}
 	err = env.Parse(&cfg)
