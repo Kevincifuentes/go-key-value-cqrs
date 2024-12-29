@@ -31,7 +31,7 @@ func TestMain(testing *testing.M) {
 	http.DefaultTransport.(*http.Transport).MaxIdleConnsPerHost = 100
 
 	var hostUrl string
-	if loadTestServer, _ := strconv.ParseBool(os.Getenv("LOAD_TEST_SERVER")); !loadTestServer {
+	if loadTestServer, _ := strconv.ParseBool(os.Getenv("LOAD_TEST_SERVER")); loadTestServer {
 		testServer = httptest.NewServer(api.InitHandler(applicationConfiguration))
 		hostUrl = testServer.URL
 	} else {
