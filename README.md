@@ -13,7 +13,8 @@
 
 # Description
 
-go-key-value-cqrs is an example project to implement CQRS, DDD and Hexagonal Architecture using Golang programming language.
+go-key-value-cqrs is an example project to implement CQRS, DDD and Hexagonal Architecture using Golang 
+programming language.
 
 It will support a Key/Value storage service with REST API capabilities to:
 * Get KeyValue by Key
@@ -22,7 +23,8 @@ It will support a Key/Value storage service with REST API capabilities to:
 
 # Run server
 
-There are two ways of running the server: simply [locally](#run-server-locally) using the code or using [docker](#run-server-using-docker):
+There are two ways of running the server: simply [locally](#run-server-locally) using the code or using 
+[docker](#run-server-using-docker):
 
 ## Run server Locally
 To run the server, you don't need any configuration because it uses default values but if you want to configure it, 
@@ -99,7 +101,8 @@ docker run -p 9090:9090 -e SERVER_PORT=9090 keyvalueserver-app
 
 # Run tests
 
-There are two ways of running the server: simply [locally](#locally) using the code or using [docker](#using-docker):
+There are two ways of running the server: simply [locally](#run-tests-locally) using the code or using 
+[docker](#run-tests-using-docker):
 
 ## Run tests locally
 
@@ -124,8 +127,10 @@ ok      go-key-value-cqrs/e2e   0.202s  coverage: 37.9% of statements in go-key-
 Processing module /Users/mongatanga/Documents/Personal/Repositories/go-key-value-cqrs/internal/domain
 ok      go-key-value-cqrs/domain        0.198s  coverage: 87.0% of statements in go-key-value-cqrs/...
 Processing module /Users/mongatanga/Documents/Personal/Repositories/go-key-value-cqrs/internal/application
-ok      go-key-value-cqrs/application/queries/cqrs/querybus     0.183s  coverage: 88.2% of statements in go-key-value-cqrs/...
-ok      go-key-value-cqrs/application/queries/keyvalue/getvalue 0.342s  coverage: 27.5% of statements in go-key-value-cqrs/...
+ok      go-key-value-cqrs/application/queries/cqrs/querybus     0.183s  coverage: 88.2% of statements in 
+go-key-value-cqrs/...
+ok      go-key-value-cqrs/application/queries/keyvalue/getvalue 0.342s  coverage: 27.5% of statements in 
+go-key-value-cqrs/...
 ```
 
 When finished, you can access to ```go-key-value-cqrs/assets/coverage.html``` to see a user-friendly coverage report for 
@@ -159,4 +164,5 @@ go build -o assets/keyvalueserver -tags debug
 ```
 
 This will generate an executable with the capabilities described on 
-[pprof documentation](https://pkg.go.dev/net/http/pprof). You can access all that information on the URL (f.e. http://localhost:8081/debug/pprof/).
+[pprof documentation](https://pkg.go.dev/net/http/pprof). You can access all that information on the URL 
+(f.e. http://localhost:8081/debug/pprof/).
