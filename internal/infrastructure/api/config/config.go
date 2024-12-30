@@ -10,7 +10,7 @@ import (
 type Config struct {
 	Host            string `env:"SERVER_HOST,required" envDefault:"localhost"`
 	Port            int    `env:"SERVER_PORT,required" envDefault:"8080"`
-	OpenApiPath     string `env:"OPENAPI_RELATIVE_PATH,required" envDefault:"./api/keyvalue/api.yml"`
+	OpenApiPath     string `env:"OPENAPI_RELATIVE_PATH,required" envDefault:"./api.yml"`
 	DebugServerPort int    `env:"DEBUG_SERVER_PORT" envDefault:"8081"`
 	DebugServerHost string `env:"DEBUG_SERVER_HOST" envDefault:"localhost"`
 }
