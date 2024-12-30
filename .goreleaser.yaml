@@ -46,6 +46,10 @@ changelog:
       - "^test:"
 
 release:
+  draft: true
+  use_existing_draft: true
+  extra_files:
+    - glob: ./api/keyvalue/api.yml
   footer: >-
 
     ---
