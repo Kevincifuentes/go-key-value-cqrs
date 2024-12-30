@@ -10,6 +10,7 @@
   * [Run tests locally](#run-tests-locally)
   * [Run tests using docker](#run-tests-using-docker)
 * [Debug Mode](#debug-mode)
+* [Using a Release version](#using-a-release-version)
 
 # Description
 
@@ -166,3 +167,12 @@ go build -o assets/keyvalueserver -tags debug
 This will generate an executable with the capabilities described on 
 [pprof documentation](https://pkg.go.dev/net/http/pprof). You can access all that information on the URL 
 (f.e. http://localhost:8081/debug/pprof/).
+
+# Using a release version
+
+Fortunately, we have provided also releases of this KeyValue server using [GoReleaser](https://goreleaser.com/), so
+you can directly download the proper executable for your system and execute it. You will need to download the binary
+for your system and the `api.yml` OpenApi file (also provided on the 
+[release section](https://github.com/Kevincifuentes/go-key-value-cqrs/releases)). Both files are on the tar.gz compressed
+file.
+

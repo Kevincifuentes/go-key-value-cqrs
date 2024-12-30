@@ -4,20 +4,18 @@ go 1.23.4
 
 replace go-key-value-cqrs/infrastructure => ./internal/infrastructure
 
-require (
-	github.com/caarlos0/env/v6 v6.10.1
-	github.com/joho/godotenv v1.5.1
-	go-key-value-cqrs/infrastructure v0.0.0-00010101000000-000000000000
-)
+require go-key-value-cqrs/infrastructure v0.0.0-00010101000000-000000000000
 
 require (
 	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
+	github.com/caarlos0/env/v6 v6.10.1 // indirect
 	github.com/getkin/kin-openapi v0.127.0 // indirect
 	github.com/go-openapi/jsonpointer v0.21.0 // indirect
 	github.com/go-openapi/swag v0.23.0 // indirect
 	github.com/google/uuid v1.5.0 // indirect
 	github.com/gorilla/mux v1.8.1 // indirect
 	github.com/invopop/yaml v0.3.1 // indirect
+	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/labstack/gommon v0.4.2 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
