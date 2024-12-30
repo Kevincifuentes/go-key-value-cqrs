@@ -37,6 +37,9 @@ archives:
     format_overrides:
       - goos: windows
         format: zip
+    files:
+      - api/keyvalue/api.yml
+      - README.md
 
 changelog:
   sort: asc
@@ -50,8 +53,6 @@ release:
   use_existing_draft: true
   replace_existing_draft: true
   replace_existing_artifacts: true
-  extra_files:
-    - glob: ./api/keyvalue/api.yml
   footer: >-
 
     ---
