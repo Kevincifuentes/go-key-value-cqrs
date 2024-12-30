@@ -19,6 +19,7 @@ import (
 	"go-key-value-cqrs/infrastructure/persistence"
 	"golang.org/x/exp/maps"
 	"net/http"
+	"os"
 	"path/filepath"
 )
 
@@ -32,6 +33,11 @@ func InitHandler(applicationConfiguration config.Config) http.Handler {
 	var handler http.Handler
 	handler = HandlerFromMux(keyValueServer, serveMux)
 	openApiFilepath, _ := filepath.Abs(applicationConfiguration.OpenApiPath)
+	if _, err := os.Stat(openApiFilepath); os.IsNotExist(err) {
+		log.Fatalf("OpenApi configuration file path %v is invalid. Please provide a valid openapi YAML file "+
+			"path with OPENAPI_RELATIVE_PATH env variable or place it at the same level of the executable",
+			openApiFilepath)
+	}
 	swagger, _ := openapi3.NewLoader().LoadFromFile(openApiFilepath)
 	validatorMiddleware := middleware.OapiRequestValidatorWithOptions(swagger,
 		&middleware.Options{ErrorHandler: handleErrorMessage})
