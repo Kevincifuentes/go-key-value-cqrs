@@ -40,6 +40,8 @@ jobs:
 
       - name: download profile
         uses: actions/download-artifact@v4
+        with:
+          name: final.out
 
       - name: download artifact (main.breakdown)
         id: download-main-breakdown
