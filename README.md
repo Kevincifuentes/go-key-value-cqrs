@@ -1,4 +1,6 @@
 [![made-with-Go](https://img.shields.io/badge/Made%20with-Go-1f425f.svg)](http://golang.org)
+![coverage](https://raw.githubusercontent.com/Kevincifuentes/badges/badges/.badges/Kevincifuentes/go-key-value-cqrs/main/coverage.svg)
+
 # go-key-value-cqrs
 
 # Index
