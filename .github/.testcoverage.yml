@@ -43,7 +43,7 @@ exclude:
   # Exclude files or packages matching their paths
   paths:
     - \.pb\.go$    # excludes all protobuf generated files
-    - ^go-key-value-cqrs/infrastructure/api/config     # exclude package `pkg/bar`
+    - ^api/config     # exclude package `pkg/bar`
 
 # File name of go-test-coverage breakdown file, which can be used to
 # analyze coverage difference.
