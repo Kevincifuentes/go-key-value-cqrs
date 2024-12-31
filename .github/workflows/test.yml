@@ -54,7 +54,7 @@ jobs:
 
       - name: check test coverage
         id: coverage
-        uses: vladopajic/go-test-coverage@v2
+        uses: vladopajic/go-test-coverage@v2.11.1
         continue-on-error: true # Should fail after coverage comment is posted
         with:
           config: ./.github/.testcoverage.yml
@@ -62,7 +62,7 @@ jobs:
           git-branch: badges
           git-token: ${{ github.ref_name == 'main' && secrets.GITHUB_TOKEN || '' }}
           breakdown-file-name: ${{ github.ref_name == 'main' && 'main.breakdown' || '' }}
-          diff-base-breakdown-file-name: ${{ steps.download-main-breakdown.outputs.found_artifact }}
+          diff-base-breakdown-file-name: ${{ steps.download-main-breakdown.outputs.found_artifact && 'main.breakdown' || '' }}
 
       - name: upload artifact (main.breakdown)
         uses: actions/upload-artifact@v4
