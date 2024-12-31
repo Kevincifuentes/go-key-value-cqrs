@@ -16,7 +16,7 @@ jobs:
 
       - name: test
         env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # Needed for GitHub badge storer integration test
+          GITHUB_TOKEN: ${{secrets.PAT_TOKEN}} # Needed for GitHub badge storer integration test
         run: bash runAllTests.sh
 
       - name: upload cover profile artifact
@@ -58,7 +58,7 @@ jobs:
           git-branch: badges
           git-repository: Kevincifuentes/badges
           git-file-name: .badges/${{ github.repository }}/${{ github.ref_name }}/coverage.svg
-          git-token: ${{ github.ref_name == 'main' && secrets.GITHUB_TOKEN || '' }}
+          git-token: ${{ github.ref_name == 'main' && secrets.PAT_TOKEN || '' }}
           breakdown-file-name: ${{ github.ref_name == 'main' && 'main.breakdown' || '' }}
           diff-base-breakdown-file-name: ${{ steps.download-main-breakdown.outputs.found_artifact == 'true' && 'main.breakdown' || '' }}
 
@@ -73,7 +73,7 @@ jobs:
       # Post coverage report as comment
       - name: find pull request ID
         run: |
-          PR_DATA=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          PR_DATA=$(curl -s -H "Authorization: token ${{ secrets.PAT_TOKEN }}" \
             "https://api.github.com/repos/${{ github.repository }}/pulls?head=${{ github.repository_owner }}:${{ github.ref_name }}&state=open")
           PR_ID=$(echo "$PR_DATA" | jq -r '.[0].number')
           
@@ -94,7 +94,7 @@ jobs:
         if: env.pull_request_id
         uses: peter-evans/create-or-update-comment@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT_TOKEN }}
           issue-number: ${{ env.pull_request_id }}
           comment-id: ${{ steps.fc.outputs.comment-id }}
           edit-mode: replace
